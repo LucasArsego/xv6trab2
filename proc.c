@@ -308,6 +308,7 @@ void scheduler(void){
             if(p->state == RUNNABLE){
                 if(p->passada < minPass){
                   pp = p;
+                  minPass = pp->passada;
                 }
             }
         }
@@ -315,6 +316,7 @@ void scheduler(void){
             // Switch to chosen process.  It is the process's job
             // to release ptable.lock and then reacquire it
             // before jumping back to us.
+            //cprintf("pid: %d pa: %d p: %d\n",pp->pid,pp->passo,pp->passada);
             pp->passada += pp->passo;
             proc = pp;
             switchuvm(pp);
