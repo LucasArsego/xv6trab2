@@ -2,7 +2,7 @@
 #include "user.h"
 
 #define STDOUT 1			// Nomenclature used by xv6 for outputs
-#define CHILDS 3			// Number of thread to be created on test
+#define CHILDS 8			// Number of thread to be created on test
 #define QUANTUM 112345678		// 10^8 = Time of thread execution
 
 
@@ -17,20 +17,20 @@ void quantumLoop(){
 	}
 }
 
+int randstate=1;
+int random(){
+  randstate = randstate * 1664525 + 1013904223;
+  if(randstate<0){
+    return (randstate*-1);
+  }
+   return randstate;
+ }
 // Instanciation of multiple process to test:
 int main(){
 	int pid;
 	int i;
 	for(i = 0; i < CHILDS; i++){
-		if(i == 0){
-			pid= fork(100);
-		}
-		else if(i == 1){
-			pid= fork(50);
-		}
-		else{
-			pid = fork(250);
-		}
+		pid= fork((random()%CHILDS)*40);
 		if(pid == 0){
         quantumLoop();
     		exit();
@@ -39,7 +39,7 @@ int main(){
 
 	// Waits for process end and print his informations:
 	for(;;){
-		pid=wait();
+		  pid = wait();
      	if(pid<0)break;
      	printf(STDOUT,"Child %d finished\n",pid );
 	}

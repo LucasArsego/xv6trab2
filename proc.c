@@ -146,20 +146,19 @@ int fork(int tickets){
   np->sz = proc->sz;
   np->parent = proc;
   *np->tf = *proc->tf;
-  np->passo = 0;
   if(!tickets){                          // When the parameter is = 0, then we set the DEFAULT value.
     np->tickets = DEFAULT_TICKETS;
   }
-  else if(tickets<0){                    // When the parameter is < 0, then we set the MIN value.
+  else if(tickets<MIN_TICKETS){                    // When the parameter is < MIN_TICKETS, then we set the MIN value.
     np->tickets = MIN_TICKETS;
   }
-  else if(tickets>MAX_TICKETS){          // When the paramter is > 0, then we set the MAX value.
+  else if(tickets>MAX_TICKETS){          // When the paramter is > MAX_TICKETS, then we set the MAX value.
     np->tickets = MAX_TICKETS;
   }
   else{                                  // Otherwise we set the received value.
     np->tickets=tickets;
   }
-
+  //cprintf("%d\n",np->tickets);
   np->passo = CONSTANTE / np->tickets;
   np->passada = 0;
 
@@ -231,8 +230,7 @@ exit(void)
 // Wait for a child process to exit and return its pid.
 // Return -1 if this process has no children.
 int
-wait(void)
-{
+wait(void){
   struct proc *p;
   int havekids, pid;
 
@@ -252,6 +250,9 @@ wait(void)
         freevm(p->pgdir);
         p->state = UNUSED;
         p->pid = 0;
+        p->passada = 0;
+        p->passo = 0;
+        p->tickets = 0;
         p->parent = 0;
         p->name[0] = 0;
         p->killed = 0;

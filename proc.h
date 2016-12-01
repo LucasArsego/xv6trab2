@@ -2,8 +2,8 @@
 #define NSEGS     7
 
 #define DEFAULT_TICKETS 100         // Default Ticket Numbers
-#define MIN_TICKETS 20             // Process MIN Ticket Number
-#define MAX_TICKETS 500             // Process MAX Ticket Number
+#define MIN_TICKETS 50             // Process MIN Ticket Number
+#define MAX_TICKETS 1000             // Process MAX Ticket Number
 #define CONSTANTE   10000          //###############
 
 // Per-CPU state
