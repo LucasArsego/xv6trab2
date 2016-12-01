@@ -497,7 +497,7 @@ procdump(void)
       state = states[p->state];
     else
       state = "???";
-    cprintf("%d %d %d %d %s %s", p->pid, p->tickets,p->passo,p->passada, state, p->name);
+    cprintf("id:%d t:%d p:%d pa:%d %s %s", p->pid, p->tickets,p->passo,p->passada, state, p->name);
     if(p->state == SLEEPING){
       getcallerpcs((uint*)p->context->ebp+2, pc);
       for(i=0; i<10 && pc[i] != 0; i++)
