@@ -250,9 +250,6 @@ wait(void){
         freevm(p->pgdir);
         p->state = UNUSED;
         p->pid = 0;
-        p->passada = 0;
-        p->passo = 0;
-        p->tickets = 0;
         p->parent = 0;
         p->name[0] = 0;
         p->killed = 0;
@@ -293,7 +290,6 @@ void whatever(){
 //      via swtch back to the scheduler.
 void scheduler(void){
   struct proc *p;
-  struct proc *pp;
   //struct proc *c = whatever();
   for(;;){
     // Enable interrupts on this processor.
@@ -303,13 +299,17 @@ void scheduler(void){
     whatever();
     // Start of new Scheduler:
     if(N > 0){
-        int minPass = 99000;
-        pp = 0;
+        struct proc *pp;
+        for(p = ptable.proc; p < &ptable.proc[NPROC];p++){
+          if(p->state == RUNNABLE){
+            pp = p;
+            break;
+          }
+        }
         for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
             if(p->state == RUNNABLE){
-                if(p->passada < minPass){
+                if(p->passada < pp->passada){
                   pp = p;
-                  minPass = pp->passada;
                 }
             }
         }
@@ -317,23 +317,22 @@ void scheduler(void){
             // Switch to chosen process.  It is the process's job
             // to release ptable.lock and then reacquire it
             // before jumping back to us.
-            //cprintf("pid: %d pa: %d p: %d\n",pp->pid,pp->passo,pp->passada);
             pp->passada += pp->passo;
             proc = pp;
+            if(proc->passada < 0){
+                proc->passada = 0;
+            }
             switchuvm(pp);
             pp->state = RUNNING;
             swtch(&cpu->scheduler, proc->context);
             switchkvm();
-
             // Process is done running for now.
             // It should have changed its p->state before coming back.
             proc = 0;
             pp = 0;
-
         }
     }
     release(&ptable.lock);
-
   }
 }
 
